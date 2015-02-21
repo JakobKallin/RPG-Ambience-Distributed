@@ -2,8 +2,7 @@
 
 var http = require('http');
 
-// var clients = {};
-var clients = [];
+var clients = {};
 
 var server = http.createServer(function(request, response) {
 	if ( request.method === 'GET' ) {
@@ -25,22 +24,21 @@ function get(request, response) {
 		'access-control-allow-origin': '*'
 	});
 	
-	// var client = request.socket.remoteAddress;
-	// if ( !(client in clients) ) {
-	// 	clients[client] = response;
-	// }
-	clients.push(response);
+	var client = request.socket.remoteAddress;
+	if ( !(client in clients) ) {
+		clients[client] = response;
+		console.log('Adding client ' + client);
+	}
 }
 
 function post(request, response) {
 	var query = parseUrl(request.url).query;
-	// Object.keys(clients).forEach(function(otherClient) {
-	// 	if ( true || otherClient !== client ) {
-	// 		sendEvent(query.event, query.data, clients[otherClient]);
-	// 	}
-	// });
-	clients.forEach(function(otherClient) {
-		sendEvent(query.event, query.data, otherClient);
+	var client = request.socket.remoteAddress;
+	Object.keys(clients).forEach(function(otherClient) {
+		if ( otherClient !== client ) {
+			sendEvent(query.event, query.data, clients[otherClient]);
+			console.log('Sending ' + query.event + ' event to ' + otherClient + ': ' + query.data);
+		}
 	});
 	
 	response.writeHead(200, {
@@ -65,7 +63,6 @@ function sendEvent(userEvent, userData, response) {
 		response.write('event: ' + event + '\n');
 		response.write('data: ' + data + '\n');
 		response.write('\n');
-		console.log('Sending ' + event + ' event: ' + data);
 	}
 }
 
