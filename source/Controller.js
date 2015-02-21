@@ -5,6 +5,27 @@
 Ambience.App = {};
 
 Ambience.Controller = function($scope, ambience, localLibrary, googleDriveLibrary) {
+	var eventSource = Ambience.distributed.start();
+	
+	eventSource.addEventListener('scene', function(event) {
+		console.log('Receiving scene event: ' + event.data);
+		var name = event.data;
+		var scenes = $scope.app.adventure.scenes.filter(function(s) {
+			return s.name === name
+		});
+		scenes.forEach(function(s) {
+			ambience.play(s, false);
+		});
+	});
+	
+	eventSource.addEventListener('action', function(event) {
+		console.log('Receiving action event: ' + event.data);
+		var name = event.data;
+		if ( name === 'stop' ) {
+			ambience.fadeOutTopmost(false);
+		}
+	});
+	
 	$scope.playScene = function(scene) {
 		ambience.play(scene);
 	};

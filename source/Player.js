@@ -8,7 +8,7 @@ Ambience.Player = function() {
 };
 
 Ambience.Player.prototype = {
-	play: function(appScene) {
+	play: function(appScene, distribute) {
 		if ( !appScene ) {
 			return;
 		}
@@ -27,6 +27,11 @@ Ambience.Player.prototype = {
 		
 		var theaterScene = this.convertScene(appScene);
 		method(theaterScene);
+		
+		if ( distribute !== false ) {
+			Ambience.distributed.trigger('scene', appScene.name);
+			console.log('Sending scene event: ' + appScene.name);
+		}
 	},
 	
 	fadeOutForeground: function() {
@@ -37,11 +42,16 @@ Ambience.Player.prototype = {
 		this.background.fadeOut();
 	},
 	
-	fadeOutTopmost: function() {
+	fadeOutTopmost: function(distribute) {
 		if ( this.foreground.sceneIsPlaying ) {
 			this.fadeOutForeground();
 		} else if ( this.background.sceneIsPlaying ) {
 			this.fadeOutBackground();
+		}
+		
+		if ( distribute !== false ) {
+			Ambience.distributed.trigger('action', 'stop');
+			console.log('Sending action event: stop');
 		}
 	},
 	
