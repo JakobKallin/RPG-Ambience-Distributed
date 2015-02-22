@@ -35,10 +35,8 @@ function get(request, response) {
 	});
 	
 	var client = request.socket.remoteAddress;
-	if ( !(client in clients) ) {
-		clients[client] = response;
-		console.log('Adding client ' + client);
-	}
+	clients[client] = response;
+	console.log('Adding client ' + client);
 }
 
 function post(request, response) {
