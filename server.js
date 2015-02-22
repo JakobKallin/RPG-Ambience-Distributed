@@ -29,7 +29,9 @@ console.log('Server URL: http://' + ip + ':' + port + '/');
 function get(request, response) {
 	response.writeHead(200, {
 		'content-type': 'text/event-stream',
-		'access-control-allow-origin': '*'
+		'access-control-allow-origin': '*',
+		'connection': 'keep-alive',
+		'cache-control': 'no-cache'
 	});
 	
 	var client = request.socket.remoteAddress;
@@ -60,7 +62,9 @@ function post(request, response) {
 function head(request, response) {
 	response.writeHead(200, {
 		'content-type': 'text/event-stream',
-		'access-control-allow-origin': '*'
+		'access-control-allow-origin': '*',
+		'connection': 'keep-alive',
+		'cache-control': 'no-cache'
 	});
 	response.end();
 }
