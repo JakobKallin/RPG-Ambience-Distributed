@@ -16,7 +16,15 @@ var server = http.createServer(function(request, response) {
 	}
 });
 
-server.listen(1337, '127.0.0.1');
+if ( process.argv.length < 4 ) {
+	console.log('Usage: node server.js ip port');
+	process.exit();
+}
+
+var ip = process.argv[2];
+var port = process.argv[3];
+server.listen(port, ip);
+console.log('Server URL: http://' + ip + ':' + port + '/');
 
 function get(request, response) {
 	response.writeHead(200, {
@@ -34,6 +42,8 @@ function get(request, response) {
 function post(request, response) {
 	var query = parseUrl(request.url).query;
 	var client = request.socket.remoteAddress;
+	console.log('Receiving ' + query.event + ' event from ' + client + ': ' + query.data);
+	
 	Object.keys(clients).forEach(function(otherClient) {
 		if ( otherClient !== client ) {
 			sendEvent(query.event, query.data, clients[otherClient]);

@@ -26,6 +26,10 @@ Ambience.Controller = function($scope, ambience, localLibrary, googleDriveLibrar
 		}
 	});
 	
+	eventSource.addEventListener('error', function(event) {
+		console.log('EventSource error: ', event);
+	});
+	
 	$scope.playScene = function(scene) {
 		ambience.play(scene);
 	};
